@@ -4,7 +4,7 @@ LaTeX Lecture Notes from Andrew Ng - Machine Learning (coursera)
 These are the lectures notes from Coursera resources, I'm updating them while I review the lessons. 
 Feel free to contribute.
 
-#Usage
+# Usage
 Download or clone the repository:
 
 `git clone https://github.com/fergarciadlc/ML-LecturesNotes.git`
@@ -15,7 +15,8 @@ Run with pdflatex:
 
 The compilation files are ignored in this repository
 
-#Video Lectures
+# Video Lectures
+
 All the lectures can be found in the following: [youtube playlist](https://www.youtube.com/playlist?list=PLLssT5z_DsK-h9vYZkQkYNWcItqhlRJLN "youtube playlist").
 
 You can download all the lectures using [youtube-dl](http://ytdl-org.github.io/youtube-dl/) with the following command:
