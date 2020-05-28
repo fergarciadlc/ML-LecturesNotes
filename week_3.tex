@@ -297,3 +297,48 @@ The $\lambda$, or lambda, is \textbf{the regularization parameter}. It determine
 Using the above cost function with the extra summation, we can smooth the output of our hypothesis function to reduce overfitting. If lambda is chosen to be too large, it may smooth out the function too much and cause underfitting.
 
 \section{Regularized Linear Regression}
+We can apply regularization to both linear regression and logistic regression. We will approach linear regression first.
+
+\subsection{Gradient Descent}
+We will modify our gradient descent function to separate out $\theta_0$ from the rest of the parameters because we do not want to penalize $\theta_0$.
+\begin{align*}
+& \text{Repeat}\ \lbrace \\
+& \ \ \ \ \theta_0 := \theta_0 - \alpha\ \frac{1}{m}\ \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})x_0^{(i)} \\
+& \ \ \ \ \theta_j := \theta_j - \alpha\ \left[ \left( \frac{1}{m}\ \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})x_j^{(i)} \right) + \frac{\lambda}{m}\theta_j \right] &\ \ \ \ \ \ \ \ \ \ j \in \lbrace 1,2...n\rbrace\newline
+& \rbrace
+\end{align*}
+
+The term $\frac{\lambda}{m}\theta_j$ performs our regularization.
+With some manipulation our update rule can also be represented as:
+
+\begin{equation}
+\theta_j := \theta_j(1 - \alpha\frac{\lambda}{m}) - \alpha\frac{1}{m}\sum_{i=1}^m(h_\theta(x^{(i)}) - y^{(i)})x_j^{(i)}
+\end{equation}
+
+The first term in the above equation, $1 - \alpha\frac{\lambda}{m}$ will always be less than 1. Intuitively you can see it as reducing the value of $\theta_j$ by some amount on every update.
+
+Notice that the second term is now exactly the same as it was before.
+
+\subsection{Normal Equation}
+Now let's approach regularization using the alternate method of the non-iterative normal equation.
+
+To add in regularization, the equation is the same as our original, except that we add another term inside the parentheses:
+
+\begin{align*}
+& \theta = \left( X^TX + \lambda \cdot L \right)^{-1} X^Ty \\
+& \text{where}\ \ L = 
+\begin{bmatrix} 
+0 & & & & \\ 
+& 1 & & & \\ 
+& & 1 & & \\ 
+& & & \ddots & \\
+& & & & 1 \\
+\end{bmatrix}
+\end{align*}
+
+L is a matrix with 0 at the top left and 1's down the diagonal, with 0's everywhere else. It should have dimension $(n+1)\times(n+1)$. Intuitively, this is the identity matrix (though we are not including $x_0$), multiplied with a single real number $\lambda$.
+
+Recall that if $m \leq n$, then $X^TX$ is non-invertible. However, when we add the term $\lambda \cdot L$, then $X^TX + \lambda \cdot L$ becomes invertible.
+ 
+ \section{Regularized Logistic Regression}
+ 
