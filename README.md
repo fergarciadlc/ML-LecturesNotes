@@ -19,7 +19,7 @@ The compilation files are ignored in this repository
 
 All the lectures can be found in the following: [youtube playlist](https://www.youtube.com/playlist?list=PLLssT5z_DsK-h9vYZkQkYNWcItqhlRJLN "youtube playlist").
 
-You can download all the lectures using [youtube-dl](http://ytdl-org.github.io/youtube-dl/) with the following command:
+You can download all Andrew Ng. Machine Learning video lectures from YouTube using [youtube-dl](http://ytdl-org.github.io/youtube-dl/) with the following command:
 
 `youtube-dl -f 135+140 https://www.youtube.com/playlist?list=PLLssT5z_DsK-h9vYZkQkYNWcItqhlRJLN  `
 
