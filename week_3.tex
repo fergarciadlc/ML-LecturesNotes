@@ -1,8 +1,7 @@
-\newpage
-\section{Week 3}
-\section*{Logistic Regression}
+\chapter{Week 3}
+\section{Logistic Regression}
 Now we are switching from regression problems to {\bf classification problems}. Don't be confused by the name ``Logistic Regression"; it is named that way for historical reasons and is actually an approach to classification problems, not regression problems.
-\section*{Binary Classification}
+\section{Binary Classification}
 Instead of our output vector y being a continuous range of values, it will only be 0 or 1.
 \[y \in \{0,1\} \]
 Where 0 is usually taken as the ``negative class" and 1 as the "positive class", but you are free to assign any representation to it.
@@ -42,7 +41,7 @@ $h_\theta $ will give us the probability that our output is 1. For example, $h_\
 \end{align*}
 
 Our probability that our prediction is 0 is just the complement of our probability that it is 1 (e.g. if probability that it is 1 is 70\%, then the probability that it is 0 is 30\%).
-\section*{Decision Boundary}
+\section{Decision Boundary}
 In order to get our discrete 0 or 1 classification, we can translate the output of the hypothesis function as follows:
 \begin{align*}
 & h_\theta(x) \geq 0.5 \rightarrow y = 1 \\
@@ -92,7 +91,7 @@ In this case, our decision boundary is a straight vertical line placed on the gr
 
 Again, the input to the sigmoid function g(z) (e.g. $\theta^T X$) doesn't need to be linear, and could be a function that describes a circle (e.g.$ z = \theta_0 + \theta_1 x_1^2 +\theta_2 x_2^2$) or any shape to fit our data.
 
-\section*{Cost Function}
+\section{Cost Function}
 We cannot use the same cost function that we use for linear regression because the Logistic Function will cause the output to be wavy, causing many local optima. In other words, it will not be a convex function.
 
 Instead, our cost function for logistic regression looks like:
@@ -124,7 +123,7 @@ If our correct answer `y' is 1, then the cost function will be 0 if our hypothes
 
 Note that writing the cost function in this way guarantees that $J(\theta)$ is convex for logistic regression.
 
-\section*{Simplified Cost Function and Gradient Descent}
+\section{Simplified Cost Function and Gradient Descent}
 We can compress our cost function's two conditional cases into one case:
 
 \begin{equation}

@@ -1,7 +1,6 @@
-\newpage
-\section{Summary}
-\section*{Lineal Regression}
-\subsection*{Hypothesis}
+\chapter{Summary}
+\section{Lineal Regression}
+\subsection{Hypothesis}
 \begin{equation}
 h_\theta (x) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \theta_3 x_3 + \cdots + \theta_n x_n 
 \end{equation}
@@ -9,23 +8,23 @@ h_\theta (x) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \theta_3 x_3 + \cdots + 
 h_\theta(x) &= \theta^T x \\
 h_\theta(X) &= X\theta 
 \end{align}
-\subsection*{Cost Function}
+\subsection{Cost Function}
 \begin{align}
 J(\theta) &= \frac{1}{2m} \sum_{i=1}^m \left(h_\theta (x^{(i)}) - y^{(i)} \right)^2 \\
 J(\theta) &= \frac{1}{2m} (X\theta - \vec{y})^T (X\theta - \vec{y})
 \end{align}
-\subsection*{Gradient Descent}
+\subsection{Gradient Descent}
 \begin{align}
 \theta_j &:= \theta_j - \alpha \frac{1}{m} \sum\limits_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)}) \cdot x_j^{(i)} \\
 \theta &:= \theta - \frac{\alpha}{m}X^T (X\theta - \vec{y})
 \end{align}
 for j=0, 1,..., n:
-\subsection*{Normal Equation}
+\subsection{Normal Equation}
 \begin{equation}
 \theta=(X^TX)^{-1}X^Ty
 \end{equation}
-\section*{Logistic Regression}
-\subsection*{Hypothesis}
+\section{Logistic Regression}
+\subsection{Hypothesis}
 \begin{equation}
 0 \leq h_\theta (x) \leq 1
 \end{equation}
@@ -37,7 +36,7 @@ for j=0, 1,..., n:
 & h_\theta(x) = P(y=1 | x ; \theta) = 1 - P(y=0 | x ; \theta) \\& 
 P(y = 0 | x;\theta) + P(y = 1 | x ; \theta) = 1
 \end{align}
-\subsection*{Cost Function}
+\subsection{Cost Function}
 \begin{equation}
 J(\theta) = - \frac{1}{m} \displaystyle \sum_{i=1}^m [y^{(i)}\log (h_\theta (x^{(i)})) + (1 - y^{(i)})\log (1 - h_\theta(x^{(i)}))]
 \end{equation}
@@ -45,7 +44,7 @@ J(\theta) = - \frac{1}{m} \displaystyle \sum_{i=1}^m [y^{(i)}\log (h_\theta (x^{
 h &= g(X\theta)\\
 J(\theta)  &= \frac{1}{m} \cdot \left(-y^{T}\log(h)-(1-y)^{T}\log(1-h)\right)
 \end{align}
-\subsection*{Gradient Descent}
+\subsection{Gradient Descent}
 \begin{align}
 \theta_j &:= \theta_j - \frac{\alpha}{m} \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)} \\
 \theta &:= \theta - \frac{\alpha}{m} X^{T} (g(X \theta ) - \vec{y})

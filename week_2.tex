@@ -1,6 +1,5 @@
-\newpage
-\section{Week 2}
-\section*{ML:Linear Regression with Multiple Variables}
+\chapter{Week 2}
+\section{ML:Linear Regression with Multiple Variables}
 Linear regression with multiple variables is also known as ``multivariate linear regression".
 
 We now introduce notation for equations where we can have any number of input variables.
@@ -50,7 +49,7 @@ You can calculate the hypothesis as a column vector of size (m x 1) with:
 h_\theta (X)=X\theta
 \end{equation}
 For the rest of these notes, and other lecture notes, X will represent a matrix of training examples $x_{(i)}$ {\bf stored row-wise.}
-\section*{Cost Function}
+\section{Cost Function}
 For the parameter vector $\theta$ (of type $\mathbb{R} ^{n+1}$ or in $\mathbb{R} ^{(n+1)\times 1}$), the cost function is:
 \begin{equation}
 J(\theta) = \frac{1}{2m} \sum_{i=1}^m \left(h_\theta (x^{(i)}) - y^{(i)} \right)^2
@@ -60,7 +59,7 @@ The vectorized version is:
 J(\theta) = \frac{1}{2m} (X\theta - \vec{y})^T (X\theta - \vec{y})
 \end{equation}
 Where $\vec{y}$ denotes the vector of all y values.
-\section*{Gradient Descent for Multiple Variables}
+\section{Gradient Descent for Multiple Variables}
 The gradient descent equation itself is generally the same form; we just have to repeat it for our ``n'' features:
 \begin{align*}
 & \text{repeat until convergence:} \; \lbrace \\ 
@@ -76,7 +75,7 @@ In other words:
 \; & \theta_j := \theta_j - \alpha \frac{1}{m} \sum\limits_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)}) \cdot x_j^{(i)} \;  & \text{for j := 0..n}\\ 
 \rbrace
 \end{align*}
-\section*{Matrix Notation}
+\section{Matrix Notation}
 The Gradient Descent rule can be expressed as:
 \begin{equation}
 \theta := \theta - \alpha \nabla J(\theta)
@@ -106,7 +105,7 @@ Finally, the matrix notation (vectorized) of the Gradient Descent rule is:
 \begin{equation}
 \theta := \theta - \frac{\alpha}{m}X^T (X\theta - \vec{y})
 \end{equation}
-\section*{Feature Normalization}
+\section{Feature Normalization}
 We can speed up gradient descent by having each of our input values in roughly the same range. This is because $\theta$ will descend quickly on small ranges and slowly on large ranges, and so will oscillate inefficiently down to the optimum when the variables are very uneven.
 
 The way to prevent this is to modify the ranges of our input variables so that they are all roughly the same. Ideally:
@@ -126,17 +125,17 @@ Note that dividing by the range, or dividing by the standard deviation, give dif
 Example: $x_i$ is housing prices with range of 100 to 2000, with a mean value of 1000. 
 
 Then, $x_i := \dfrac{price-1000}{1900} $
-\section*{Gradient Descent Tips}
+\section{Gradient Descent Tips}
 Debugging gradient descent. Make a plot with number of iterations on the x-axis. Now plot the cost function, $J(\theta)$ over the number of iterations of gradient descent. If $J(\theta)$ ever increases, then you probably need to decrease $\alpha$.
 
 Automatic convergence test. Declare convergence if $J(\theta)$ decreases by less than E in one iteration, where E is some small value such as 10-3. However in practice it's difficult to choose this threshold value.
 
 It has been proven that if learning rate $\alpha$ is sufficiently small, then $J(\theta)$ will decrease on every iteration. Andrew Ng recommends decreasing $\alpha$ by multiples of 3.
-\subsection*{Features and Polynomial Regression}
+\subsection{Features and Polynomial Regression}
 We can improve our features and the form of our hypothesis function in a couple different ways.
 
 We can combine multiple features into one. For example, we can combine $x_1$ and $x_2$ into a new feature $x_3$ by taking $x_1\cdot x_2$
-\subsubsection*{Polynomial Regression}
+\subsubsection{Polynomial Regression}
 Our hypothesis function need not be linear (a straight line) if that does not fit the data well.
 
 We can {\bf change the behavior or curve} of our hypothesis function by making it a quadratic, cubic or square root function (or any other form).
@@ -152,7 +151,7 @@ Note that at 2:52 and through 6:22 in the "Features and Polynomial Regression" v
 One important thing to keep in mind is, if you choose your features this way then feature scaling becomes very important.
 
 eg. if $x_1$ has range 1 - 1000 then range of $x_1^2$ becomes 1 - 1000000 and that of $x_1^3$ becomes 1 - 1000000000.
-\section*{Normal Equation}
+\section{Normal Equation}
 The "Normal Equation" is a method of finding the optimum theta {\bf without iteration}.
 \begin{equation}
 \theta=(X^TX)^{-1}X^Ty
@@ -185,7 +184,7 @@ Works well when n is large & Slow if n is very large \\
 \end{tabular} 
 \end{center}
 With the normal equation, computing the inversion has complexity $\mathcal{O}(n^3)$. So if we have a very large number of features, the normal equation will be slow. In practice, when n exceeds 10,000 it might be a good time to go from a normal solution to an iterative process.
-\subsection*{Normal Equation Noninvertibility}
+\subsection{Normal Equation Noninvertibility}
 When implementing the normal equation in octave we want to use the \verb|pinv| function rather than \verb|inv|.
 
 $X^TX$ may be {\bf noninvertible}. The common causes are:

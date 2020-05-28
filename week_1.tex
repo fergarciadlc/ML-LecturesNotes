@@ -1,5 +1,5 @@
-\section{Week 1}
-\section*{What is Machine Learning?}
+\chapter{Week 1}
+\section{What is Machine Learning?}
 Two definitions of Machine Learning are offered. {\bf Arthur Samuel} described it as: {\bf ``the field of study that gives computers the ability to learn without being explicitly programmed."} This is an older, informal definition.
 
 {\bf Tom Mitchell} provides a more modern definition: 
@@ -14,38 +14,38 @@ P = the probability that the program will win the next game.
 
 In general, any machine learning problem can be assigned to one of two broad classifications: {\bf supervised learning, or unsupervised learning}.
 
-\section*{Supervised Learning}
+\section{Supervised Learning}
 In supervised learning, we are given a data set and already know what our correct output should look like, having the idea that there is a relationship between the input and the output.
 
 Supervised learning problems are categorized into ``regression" and ``classification" problems. In a regression problem, we are trying to predict results within a continuous output, meaning that we are trying to map input variables to some continuous function. In a classification problem, we are instead trying to predict results in a discrete output. In other words, we are trying to map input variables into discrete categories. Here is a description on Math is Fun on Continuous and Discrete Data.
-\subsection*{Example 1}
+\subsection{Example 1}
 Given data about the size of houses on the real estate market, try to predict their price. Price as a function of size is a continuous output, so this is a regression problem.
 
 We could turn this example into a classification problem by instead making our output about whether the house ``sells for more or less than the asking price." Here we are classifying the houses based on price into two discrete categories.
-\subsection*{Example 2}
+\subsection{Example 2}
 \begin{itemize}
 	\item[A)] {\bf Regression} - Given a picture of Male/Female, We have to predict his/her age on the basis of given picture.
 	\item[B)] {\bf Classification}  - Given a picture of Male/Female, We have to predict whether He/She is of High school, College, Graduate age. Another Example for Classification - Banks have to decide whether or not to give a loan to someone on the basis of his credit history.
 \end{itemize}
-\section*{Unsupervised Learning}
+\section{Unsupervised Learning}
 Unsupervised learning, on the other hand, allows us to approach problems with little or no idea what our results should look like. We can derive structure from data where we don't necessarily know the effect of the variables.
 
 We can derive this structure by clustering the data based on relationships among the variables in the data.
 
 With unsupervised learning there is no feedback based on the prediction results, i.e., {\bf there is no teacher to correct you}.
-\subsection*{Example}
+\subsection{Example}
 {\bf Clustering}: Take a collection of 1000 essays written on the US Economy, and find a way to automatically group these essays into a small number that are somehow similar or related by different variables, such as word frequency, sentence length, page count, and so on.
 
 {\bf Non-clustering}: The ``Cocktail Party Algorithm", which can find structure in messy data (such as the identification of individual voices and music from a mesh of sounds at a \href{https://en.wikipedia.org/wiki/Cocktail_party_effect}{cocktail party}) . Here is an answer on Quora to enhance your understanding: \href{https://www.quora.com/What-is-the-difference-between-supervised-and-unsupervised-learning-algorithms}{click here!}.
 
-\section*{ML:Linear Regression with One Variable}
-\subsection*{Model Representation}
+\section{ML:Linear Regression with One Variable}
+\subsection{Model Representation}
 Recall that in regression problems, we are taking input variables and trying to fit the output onto a continuous expected result function.
 
 Linear regression with one variable is also known as ``univariate linear regression".
 
 Univariate linear regression is used when you want to predict a {\bf single output} value y from a {\bf single input} value x. We're doing {\bf supervised learning} here, so that means we already have an idea about what the input/output cause and effect should be.
-\subsection*{The Hypothesis Function}
+\subsection{The Hypothesis Function}
 Our hypothesis function has the general form:
 \begin{equation}
 \hat{y} = h_\theta(x) = \theta_0 + \theta_1 x
@@ -73,7 +73,7 @@ Now we can make a random guess about our $h_\theta$ function $\theta_0 = 2$ and 
 
 So for input of 1 to our hypothesis, y will be 4. This is off by 3. Note that we will be trying out various values of $\theta_0$ and $\theta_1$ to try to find values which provide the best possible "fit" or the most representative ``straight line" through the data points mapped on the x-y plane.
 
-\subsection*{Cost Function}
+\subsection{Cost Function}
 We can measure the accuracy of our hypothesis function by using a {\bf cost function}. This takes an average (actually a fancier version of an average) of all the results of the hypothesis with inputs from x's compared to the actual output y's.
 \begin{equation}
 J(\theta_0, \theta_1) = \frac{1}{2m} \sum_{i=1}^m \left( \hat{y}_{i}- y_{i} \right)^2  = \frac{1}{2m} \sum_{i=1}^m \left( h_\theta (x_{i}) - y_{i} \right)^2
@@ -85,7 +85,7 @@ This function is otherwise called the {\bf ``Squared error function"}, or {\bf `
 Now we are able to concretely measure the accuracy of our predictor function against the correct results we have so that we can predict new results we don't have.
 
 If we try to think of it in visual terms, our training data set is scattered on the x-y plane. We are trying to make straight line (defined by $h_\theta(x)$) which passes through this scattered set of data. Our objective is to get the best possible line. The best possible line will be such so that the average squared vertical distances of the scattered points from the line will be the least. In the best case, the line should pass through all the points of our training data set. In such a case the value of $J(\theta_0, \theta_1)$ will be 0.
-\section*{ML: Gradient Descent}
+\section{ML: Gradient Descent}
 So we have our hypothesis function and we have a way of measuring how well it fits into the data. Now we need to estimate the parameters in hypothesis function. That's where gradient descent comes in.
 
 Imagine that we graph our hypothesis function based on its fields $\theta_0$ and $\theta_1$ (actually we are graphing the cost function as a function of the parameter estimates). This can be kind of confusing; we are moving up to a higher level of abstraction. We are not graphing x and y itself, but the parameter range of our hypothesis function and the cost resulting from selecting particular set of parameters.
@@ -115,7 +115,7 @@ repeat until convergence:
 \theta_j := -\alpha \delta
 \]
 where: $\delta = \text{[Slope of tangent aka derivative in j dimension]}$
-\subsection*{Gradient Descent for Linear Regression}
+\subsection{Gradient Descent for Linear Regression}
 When specifically applied to the case of linear regression, a new form of the gradient descent equation can be derived. We can substitute our actual cost function and our actual hypothesis function and modify the equation to (the derivation of the formulas are out of the scope of this course, but a really great one can be found here):
 \begin{align*}
   \text{repeat until convergence: } \lbrace & \\
@@ -128,11 +128,11 @@ where m is the size of the training set, $\theta_0$ a constant that will be chan
 Note that we have separated out the two cases for $\theta_j$ into separate equations for $\theta_0 $ and $\theta_1$; and that for $\theta_1$ we are multiplying $x_{i}$ at the end due to the derivative.
 
 The point of all this is that if we start with a guess for our hypothesis and then repeatedly apply these gradient descent equations, our hypothesis will become more and more accurate.
-\subsection*{Gradient Descent for Linear Regression: visual worked example}
+\subsection{Gradient Descent for Linear Regression: visual worked example}
 Some may find the following \href{https://www.youtube.com/watch?v=WnqQrPNYz5Q}{video} useful as it visualizes the improvement of the hypothesis as the error function reduces.
-\section*{ML:Linear Algebra Review}
+\section{ML:Linear Algebra Review}
 Khan Academy has excellent Linear Algebra Tutorials: \href{https://www.khanacademy.org/#linear-algebra}{click here!}
-\subsection*{Matrices and Vectors}
+\subsection{Matrices and Vectors}
 Matrices are 2-dimensional arrays:
 \[
 \begin{bmatrix}  
@@ -166,7 +166,7 @@ So vectors are a subset of matrices. The above vector is a 4 x 1 matrix.
 	\item $\mathbb{R}$ refers to the set of scalar real numbers
 	\item $\mathbb{R}^n$ refers to the set of n-dimensional vectors of real numbers
 \end{itemize}
-\subsection*{Addition and Scalar Multiplication}
+\subsection{Addition and Scalar Multiplication}
 Addition and subtraction are {\bf element-wise}, so you simply add or subtract each corresponding element:
 \[
 \begin{bmatrix}  a & b \\   c & d \\  \end{bmatrix} +\begin{bmatrix}  w & x \\   y & z \\  \end{bmatrix} =\begin{bmatrix}  a+w & b+x \\   c+y & d+z \\ \end{bmatrix}
@@ -177,7 +177,7 @@ In scalar multiplication, we simply multiply every element by the scalar value:
 \[
 \begin{bmatrix}  a & b \\   c & d \\  \end{bmatrix} * x =\begin{bmatrix}  a*x & b*x \\   c*x & d*x \\ \end{bmatrix}
 \]
-\subsection*{Matrix-Vector Multiplication}
+\subsection{Matrix-Vector Multiplication}
 We map the column of the vector onto each row of the matrix, multiplying each element and summing the result.
 \[
 \begin{bmatrix}  a & b \\   c & d \\   e & f \end{bmatrix} *\begin{bmatrix}  x \\   y \\  \end{bmatrix} =\begin{bmatrix}  a*x + b*y \\   c*x + d*y \\   e*x + f*y\end{bmatrix}
@@ -186,7 +186,7 @@ The result is a vector. The vector must be the second term of the multiplication
 
 An m x n matrix multiplied by an n x 1 vector results in an m x 1 vector.
 
-\subsection*{Matrix-Matrix Multiplication}
+\subsection{Matrix-Matrix Multiplication}
 We multiply two matrices by breaking it into several vector multiplications and concatenating the result
 \[
 \begin{bmatrix}  a & b \\   c & d \\   e & f \end{bmatrix} *\begin{bmatrix}  w & x \\   y & z \\  \end{bmatrix} =\begin{bmatrix}  a*w + b*y & a*x + b*z \\   c*w + d*y & c*x + d*z \\   e*w + f*y & e*x + f*z\end{bmatrix}
@@ -194,7 +194,7 @@ We multiply two matrices by breaking it into several vector multiplications and 
 An m x n matrix multiplied by an n x o matrix results in an m x o matrix. In the above example, a 3 x 2 matrix times a 2 x 2 matrix resulted in a 3 x 2 matrix.
 
 To multiply two matrices, the number of columns of the first matrix must equal the number of rows of the second matrix.
-\subsection*{Matrix Multiplication Properties}
+\subsection{Matrix Multiplication Properties}
 \begin{itemize}
 	\item Not commutative. $A\ast B\neq B\ast A$
 	\item Associative. $(A\ast B)\ast C=A\ast (B\ast C)$
@@ -208,7 +208,7 @@ The identity matrix, when multiplied by any matrix of the same dimensions, resul
 \end{bmatrix}
 \]
 When multiplying the identity matrix after some matrix ($A\ast I$), the square identity matrix should match the other matrix's columns. When multiplying the identity matrix before some other matrix ($I\ast A$), the square identity matrix should match the other matrix's rows.
-\subsection*{Inverse and Transpose}
+\subsection{Inverse and Transpose}
 The inverse of a matrix A is denoted A-1. Multiplying by the inverse results in the identity matrix.
 
 A non square matrix does not have an inverse matrix. We can compute inverses of matrices in octave with the \verb|pinv(A)| function [1] and in matlab with the \verb|inv(A)| function. Matrices that don't have an inverse are singular or degenerate.
