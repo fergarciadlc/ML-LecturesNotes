@@ -13,7 +13,7 @@ Run with pdflatex:
 
 `pdflatex ML_main.tex`
 
-The compilation files are ignored in this repository
+The compilation files are ignored in this repository.
 
 # Video Lectures
 

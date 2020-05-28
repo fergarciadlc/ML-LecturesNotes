@@ -217,7 +217,7 @@ J(\theta)\\
 We can write a single function that returns both of these:
 
 \begin{verbatim}
-function [jVal, gradient] = costFunction(theta)
+function [jVal, gradient] = costFunc(theta)
   jVal = [...code to compute J(theta)...];
   gradient = [...code to compute derivative of J(theta)...];
 end
@@ -227,8 +227,8 @@ Then we can use octave's \verb| fminunc()| optimization algorithm along with the
 
 \begin{verbatim}
 options = optimset('GradObj', 'on', 'MaxIter', 100);
-      initialTheta = zeros(2,1);
-      [optTheta, functionVal, exitFlag] = fminunc(@costFunction, initialTheta, options);
+initTheta = zeros(2,1);
+[optTheta, funcVal, exitFlag] = fminunc(@costFunc, initTheta, options);
 \end{verbatim}
 
 We give to the function \verb| fminunc()| our cost function, our initial vector of theta values, and the \textbf{options} object that we created beforehand.
@@ -340,5 +340,74 @@ L is a matrix with 0 at the top left and 1's down the diagonal, with 0's everywh
 
 Recall that if $m \leq n$, then $X^TX$ is non-invertible. However, when we add the term $\lambda \cdot L$, then $X^TX + \lambda \cdot L$ becomes invertible.
  
- \section{Regularized Logistic Regression}
- 
+\section{Regularized Logistic Regression}
+We can regularize logistic regression in a similar way that we regularize linear regression. Let's start with the cost function.
+\subsection{Cost Function} 
+Recall that our cost function for logistic regression was:
+\begin{equation}
+J(\theta) = - \frac{1}{m} \sum_{i=1}^m \left[ y^{(i)}\ \log (h_\theta (x^{(i)})) + (1 - y^{(i)})\ \log (1 - h_\theta(x^{(i)})) \right]
+\end{equation}
+
+We can regularize this equation by adding a term to the end:
+
+\begin{equation}
+\begin{split}
+&J(\theta) = \\
+&- \frac{1}{m} \sum_{i=1}^m \left[ y^{(i)}\ \log (h_\theta (x^{(i)})) + (1 - y^{(i)})\ \log (1 - h_\theta(x^{(i)}))\right] + \frac{\lambda}{2m}\sum_{j=1}^n \theta_j^2
+\end{split}
+\end{equation}	
+
+\textbf{Note Well}: The second sum, $\sum_{j=1}^n \theta_j^2$ means to explicitly exclude the bias term, $\theta_0$. I.e. the $\theta$ vector is indexed from $\theta$ to n (holding n+1 values, $\theta_0$ through $\theta_n$), and this sum explicitly skips $\theta_0$, by running from 1 to n, skipping 0.
+
+\subsection{Gradient Descent}
+Just like with linear regression, we will want to \textbf{separately} pdate $\theta_0$ and the rest of the parameters because we do not want to regularize $\theta_0$.
+
+\begin{align*}
+& \text{Repeat}\ \lbrace \\
+& \ \ \ \ \theta_0 := \theta_0 - \alpha\ \frac{1}{m}\ \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})x_0^{(i)} \\
+& \ \ \ \ \theta_j := \theta_j - \alpha\ \left[ \left( \frac{1}{m}\ \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})x_j^{(i)} \right) + \frac{\lambda}{m}\theta_j \right] &\ \ \ \ \ \ j \in \lbrace 1,2...n\rbrace\\
+& \rbrace
+\end{align*}
+
+This is identical to the gradient descent function presented for linear regression.
+\section{Initial Ones Feature Vector}
+\subsection{Constant Feature}
+As it turns out it is crucial to add a constant feature to your pool of features before starting any training of your machine. Normally that feature is just a set of ones for all your training examples.
+
+Concretely, if $X$ is your feature matrix then $X_0$ is a vector with ones.
+
+Below are some insights to explain the reason for this constant feature. The first part draws some analogies from electrical engineering concept, the second looks at understanding the ones vector by using a simple machine learning example.
+
+\subsection{Electrical Engineering}
+From electrical engineering, in particular signal processing, this can be explained as DC and AC.
+
+The initial feature vector X without the constant term captures the dynamics of your model. That means those features particularly record changes in your output y - in other words changing some feature $X_i$ where $i\neq0$ will have a change on the output y. AC is normally made out of many components or harmonics; hence we also have many features (yet we have one DC term).
+
+The constant feature represents the DC component. In control engineering this can also be the steady state.
+
+Interestingly removing the DC term is easily done by differentiating your signal - or simply taking a difference between consecutive points of a discrete signal (it should be noted that at this point the analogy is implying time-based signals - so this will also make sense for machine learning application with a time basis - e.g. forecasting stock exchange trends).
+
+Another interesting note: if you were to play and AC+DC signal as well as an AC only signal where both AC components are the same then they would sound exactly the same. That is because we only hear changes in signals and $\Delta(AC+DC) = \Delta(AC)$
+
+\subsection{Housing price example}
+Suppose you design a machine which predicts the price of a house based on some features. In this case what does the ones vector help with?
+
+Let's assume a simple model which has features that are directly proportional to the expected price i.e. if feature Xi increases so the expected price y will also increase. So as an example we could have two features: namely the size of the house in $[m2]$, and the number of rooms.
+
+When you train your machine you will start by pretending a ones vector $X_0$. You may then find after training that the weight for your initial feature of ones is some value $\theta_0$. As it turns, when applying your hypothesis function $h_{\theta}(X)$ in the case of the initial feature you will just be multiplying by a constant (most probably $\theta_0$ if you not applying any other functions such as sigmoids). This constant (let's say it's $\theta_0$ for argument's sake) is the DC term. It is a constant that doesn't change.
+
+But what does it mean for this example? Well, let's suppose that someone knows that you have a working model for housing prices. It turns out that for this example, if they ask you how much money they can expect if they sell the house you can say that they need at least $\theta_0$ dollars (or rands) before you even use your learning machine. As with the above analogy, your constant $\theta_0$ is somewhat of a steady state where all your inputs are zeros. Concretely, this is the price of a house with no rooms which takes up no space.
+
+However this explanation has some holes because if you have some features which decrease the price e.g. age, then the DC term may not be an absolute minimum of the price. This is because the age may make the price go even lower.
+
+Theoretically if you were to train a machine without a ones vector $f_{AC}(X)$, it's output may not  match the output of a machine which had a ones vector $f_{DC}(X)$. However, $f_{AC}(X)$ may have exactly the same trend as $f_{DC}(X)$ i.e. if you were to plot both machine's output you would find that they may look exactly the same except that it seems one output has just been shifted (by a constant). With reference to the housing price problem: suppose you make predictions on two houses $house_A$ and $house_B$ using both machines. It turns out while the outputs from the two machines would different, the difference between houseA and houseB's predictions according to both machines could be exactly the same. Realistically, that means a machine trained without the ones vector $f_AC$ could actually be very useful if you have just one benchmark point. This is because you can find out the missing constant by simply taking a difference between the machine's prediction an actual price - then when making predictions you simply add that constant to what even output you get. That is: if $house_{benchmark}$ is your benchmark then the DC component is simply $price(house_{benchmark}) - f_{AC}(features(house_{benchmark}))$.
+
+A more simple and crude way of putting it is that the DC component of your model represents the inherent bias of the model. The other features then cause tension in order to move away from that bias position.
+
+Kholofelo Moyaba
+
+\subsection{A simpler approach}
+
+A "bias" feature is simply a way to move the "best fit" learned vector to better fit the data. For example, consider a learning problem with a single feature $X_1$. The formula without the $X_0$ feature is just $theta_1 \ast X_1 = y$. This is graphed as a line that always passes through the origin, with slope y/theta. The $x_0$ term allows the line to pass through a different point on the y axis. This will almost always give a better fit. Not all best fit lines go through the origin (0,0) right?
+
+Joe Cotton
