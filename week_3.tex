@@ -143,3 +143,157 @@ A vectorized implementation is:
 h &= g(X\theta)\\
 J(\theta)  &= \frac{1}{m} \cdot \left(-y^{T}\log(h)-(1-y)^{T}\log(1-h)\right)
 \end{align}
+
+\subsection{Gradient Descent}
+Remember that the general form of gradient descent is:
+\begin{align*}
+& Repeat \; \lbrace \\ 
+& \; \theta_j := \theta_j - \alpha \dfrac{\partial}{\partial \theta_j}J(\theta) \\ 
+& \rbrace
+\end{align*}
+
+We can work out the derivative part using calculus to get:
+
+\begin{align*}
+& Repeat \; \lbrace \\
+& \; \theta_j := \theta_j - \frac{\alpha}{m} \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)} \\ & \rbrace
+\end{align*}
+
+Notice that this algorithm is identical to the one we used in linear regression. We still have to simultaneously update all values in theta.
+
+A vectorized implementation is:
+\[\theta := \theta - \frac{\alpha}{m} X^{T} (g(X \theta ) - \vec{y}) \]
+
+\subsection{Partial derivative of Cost Function}
+
+First calculate derivative of sigmoid function (it will be useful while finding partial derivative of $J(\theta)$
+
+{\small
+\begin{align*}
+\sigma(x)'
+&=\left(\frac{1}{1+e^{-x}}\right)'=\frac{-(1+e^{-x})'}{(1+e^{-x})^2}\\
+&=\frac{-1'-(e^{-x})'}{(1+e^{-x})^2}=\frac{0-(-x)'(e^{-x})}{(1+e^{-x})^2}\\
+&=\frac{-(-1)(e^{-x})}{(1+e^{-x})^2}=\frac{e^{-x}}{(1+e^{-x})^2} \\ 
+&=\left(\frac{1}{1+e^{-x}}\right)\left(\frac{e^{-x}}{1+e^{-x}}\right)\\
+&=\sigma(x)\left(\frac{+1-1 + e^{-x}}{1+e^{-x}}\right)\\
+&=\sigma(x)\left(\frac{1 + e^{-x}}{1+e^{-x}} - \frac{1}{1+e^{-x}}\right)\\
+&=\sigma(x)(1 - \sigma(x))
+\end{align*}
+}
+
+Now we are ready to find out resulting partial derivative:
+{\small
+\begin{align*}
+&\frac{\partial}{\partial \theta_j} J(\theta)= \\ 
+&= \frac{\partial}{\partial \theta_j} \frac{-1}{m}\sum_{i=1}^m \left [ y^{(i)} log (h_\theta(x^{(i)})) + (1-y^{(i)}) log (1 - h_\theta(x^{(i)})) \right ] \\
+&= - \frac{1}{m}\sum_{i=1}^m \left [     y^{(i)} \frac{\partial}{\partial \theta_j} log (h_\theta(x^{(i)}))   + (1-y^{(i)}) \frac{\partial}{\partial \theta_j} log (1 - h_\theta(x^{(i)}))\right ] \\
+&= - \frac{1}{m}\sum_{i=1}^m \left [     \frac{y^{(i)} \frac{\partial}{\partial \theta_j} h_\theta(x^{(i)})}{h_\theta(x^{(i)})}   + \frac{(1-y^{(i)})\frac{\partial}{\partial \theta_j} (1 - h_\theta(x^{(i)}))}{1 - h_\theta(x^{(i)})}\right ] \\
+&= - \frac{1}{m}\sum_{i=1}^m \left [     \frac{y^{(i)} \frac{\partial}{\partial \theta_j} \sigma(\theta^T x^{(i)})}{h_\theta(x^{(i)})}   + \frac{(1-y^{(i)})\frac{\partial}{\partial \theta_j} (1 - \sigma(\theta^T x^{(i)}))}{1 - h_\theta(x^{(i)})}\right ] \\
+&= - \frac{1}{m}\sum_{i=1}^m \left [     \frac{y^{(i)} \sigma(\theta^T x^{(i)}) (1 - \sigma(\theta^T x^{(i)})) \frac{\partial}{\partial \theta_j} \theta^T x^{(i)}}{h_\theta(x^{(i)})}   + \frac{- (1-y^{(i)}) \sigma(\theta^T x^{(i)}) (1 - \sigma(\theta^T x^{(i)})) \frac{\partial}{\partial \theta_j} \theta^T x^{(i)}}{1 - h_\theta(x^{(i)})}\right ] \\
+&= - \frac{1}{m}\sum_{i=1}^m \left [     \frac{y^{(i)} h_\theta(x^{(i)}) (1 - h_\theta(x^{(i)})) \frac{\partial}{\partial \theta_j} \theta^T x^{(i)}}{h_\theta(x^{(i)})}   - \frac{(1-y^{(i)}) h_\theta(x^{(i)}) (1 - h_\theta(x^{(i)})) \frac{\partial}{\partial \theta_j} \theta^T x^{(i)}}{1 - h_\theta(x^{(i)})}\right ] \\
+&= - \frac{1}{m}\sum_{i=1}^m \left [     y^{(i)} (1 - h_\theta(x^{(i)})) x^{(i)}_j - (1-y^{(i)}) h_\theta(x^{(i)}) x^{(i)}_j\right ] \\
+&= - \frac{1}{m}\sum_{i=1}^m \left [     y^{(i)} (1 - h_\theta(x^{(i)})) - (1-y^{(i)}) h_\theta(x^{(i)}) \right ] x^{(i)}_j \\
+&= - \frac{1}{m}\sum_{i=1}^m \left [     y^{(i)} - y^{(i)} h_\theta(x^{(i)}) - h_\theta(x^{(i)}) + y^{(i)} h_\theta(x^{(i)}) \right ] x^{(i)}_j \\
+&= - \frac{1}{m}\sum_{i=1}^m \left [ y^{(i)} - h_\theta(x^{(i)}) \right ] x^{(i)}_j  \\
+&= \frac{1}{m}\sum_{i=1}^m \left [ h_\theta(x^{(i)}) - y^{(i)} \right ] x^{(i)}_j
+\end{align*}
+}
+
+The vectorized version:
+\begin{equation}
+\nabla J(\theta) = \frac{1}{m} \cdot X^T \cdot \left(g\left(X\cdot\theta\right) - \vec{y}\right)
+\end{equation}
+
+\section{Advances Optimization}
+\textbf{``Conjugate gradient"}, \textbf{``BFGS"}, and \textbf{``L-BFGS"} are more sophisticated, faster ways to optimize $\theta$ that can be used instead of gradient descent. A. Ng suggests not to write these more sophisticated algorithms yourself (unless you are an expert in numerical computing) but use the libraries instead, as they're already tested and highly optimized. Octave provides them.
+
+We first need to provide a function that evaluates the following two functions for a given input value $\theta$:
+
+\begin{align*}
+J(\theta)\\
+\frac{\partial}{\partial\theta_j}J(\theta)
+\end{align*}
+
+We can write a single function that returns both of these:
+
+\begin{verbatim}
+function [jVal, gradient] = costFunction(theta)
+  jVal = [...code to compute J(theta)...];
+  gradient = [...code to compute derivative of J(theta)...];
+end
+\end{verbatim}
+
+Then we can use octave's \verb| fminunc()| optimization algorithm along with the \verb|optimset()| function that creates an object containing the options we want to send to \verb| fminunc()|. (Note: the value for MaxIter should be an integer, not a character string - errata in the video at 7:30)
+
+\begin{verbatim}
+options = optimset('GradObj', 'on', 'MaxIter', 100);
+      initialTheta = zeros(2,1);
+      [optTheta, functionVal, exitFlag] = fminunc(@costFunction, initialTheta, options);
+\end{verbatim}
+
+We give to the function \verb| fminunc()| our cost function, our initial vector of theta values, and the \textbf{options} object that we created beforehand.
+
+\section{Multiclass Classification: One-vs-all}
+Now we will approach the classification of data into more than two categories. Instead of $y = {0,1}$ we will expand our definition so that $y = {0,1...n}$.
+
+In this case we divide our problem into n+1 (+1 because the index starts at 0) binary classification problems; in each one, we predict the probability that `y' is a member of one of our classes.
+
+\begin{align*}
+& y \in \lbrace0, 1 ... n\rbrace \\
+& h_\theta^{(0)}(x) = P(y = 0 | x ; \theta) \\
+& h_\theta^{(1)}(x) = P(y = 1 | x ; \theta) \\
+& \cdots \\
+& h_\theta^{(n)}(x) = P(y = n | x ; \theta) \\
+& \mathrm{prediction} = \max_i( h_\theta ^{(i)}(x) )\\
+\end{align*}
+
+We are basically choosing one class and then lumping all the others into a single second class. We do this repeatedly, applying binary logistic regression to each case, and then use the hypothesis that returned the highest value as our prediction.
+
+\section{ML: Regularization}
+{\bf The Problem of Overfitting}
+Regularization is designed to address the problem of overfitting.
+
+High bias or underfitting is when the form of our hypothesis function h maps poorly to the trend of the data. It is usually caused by a function that is too simple or uses too few features. eg. if we take $h_\theta(x) = \theta_0 + \theta_1x_1 + \theta_2x_2$ then we are making an initial assumption that a linear model will fit the training data well and will be able to generalize but that may not be the case.
+
+At the other extreme, overfitting or high variance is caused by a hypothesis function that fits the available data but does not generalize well to predict new data. It is usually caused by a complicated function that creates a lot of unnecessary curves and angles unrelated to the data.
+
+This terminology is applied to both linear and logistic regression. There are two main options to address the issue of overfitting:
+
+\begin{itemize}
+  \item[1)] Reduce the number of features
+  \begin{itemize}
+  	\item[A)] Manually select which features to keep. 
+  	\item[B)] Use a model selection algorithm (studied later in the course).
+  \end{itemize}
+  \item[2)] Regularization
+  \begin{itemize}
+  	\item[A)] Keep all the features, but reduce the parameters $\theta_j$
+  	\item[B)] Regularization works well when we have a lot of slightly useful features.
+  \end{itemize}  
+\end{itemize}
+
+\section{Cost Function}
+f we have overfitting from our hypothesis function, we can reduce the weight that some of the terms in our function carry by increasing their cost.
+
+Say we wanted to make the following function more quadratic:
+
+$$\theta_0 + \theta_1x + \theta_2x^2 + \theta_3x^3 + \theta_4x^4$$
+
+We'll want to eliminate the influence of $\theta_3x^3$ and $\theta_4x^4$. Without actually getting rid of these features or changing the form of our hypothesis, we can instead modify our \textbf{cost function}:
+\begin{equation}
+min_\theta\ \dfrac{1}{2m}\sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})^2 + 1000\cdot\theta_3^2 + 1000\cdot\theta_4^2
+\end{equation}
+
+We've added two extra terms at the end to inflate the cost of $\theta_3$ and $\theta_4$. Now, in order for the cost function to get close to zero, we will have to reduce the values of $\theta_3$ and $\theta_4$ to near zero. This will in turn greatly reduce the values of $\theta_3x^3$ and $\theta_4x^4$ in our hypothesis function.
+
+We could also regularize all of our theta parameters in a single summation:
+
+\begin{equation}
+min_\theta\ \dfrac{1}{2m}\ \left[ \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})^2 + \lambda\ \sum_{j=1}^n \theta_j^2 \right]
+\end{equation}
+
+The $\lambda$, or lambda, is \textbf{the regularization parameter}. It determines how much the costs of our theta parameters are inflated. You can visualize the effect of regularization in this \href{https://www.desmos.com/calculator/1hexc8ntqp}{interactive plot}
+
+Using the above cost function with the extra summation, we can smooth the output of our hypothesis function to reduce overfitting. If lambda is chosen to be too large, it may smooth out the function too much and cause underfitting.
+
+\section{Regularized Linear Regression}
