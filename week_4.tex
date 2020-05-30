@@ -1,2 +1,51 @@
-\section{Week 4}
-This is week number 4
+\chapter{Week 4}
+\section{ML: Neural Networks: Representation}
+\subsection{Non-linear Hypothesis}
+Performing linear regression with a complex set of data with many features is very unwieldy. Say you wanted to create a hypothesis from three (3) features that included all the quadratic terms:
+
+\begin{align*}
+&g(\theta_0 + \theta_1 x_1^2 + \theta_2x_1x_2+ \theta_3x_1x_3 \\
+&+ \theta_4x_2^2 + \theta_5x_2x_3 \\
+&+\theta_6x_3^2)
+\end{align*}
+
+That gives us 6 features. The exact way to calculate how many features for all polynomial terms is the combination function with repetition:
+
+\href{http://www.mathsisfun.com/combinatorics/combinations-permutations.html}{Combinations and permutations} $\frac{(n+r-1)!}{r!(n-1)!}$.
+
+In this case we are taking all two-element combinations of three features: $\frac{(3 + 2 - 1)!}{(2!\cdot (3-1)!)} = \frac{4!}{4} = 6 $.
+(\textbf{Note}: you do not have to know these formulas, I just found helpful for understanding).
+
+For 100 features, if we wanted to make the quadratic we would get $ \frac{(100 + 2 - 1)!}{(2\cdot (100-1)!)} = 5050 $ resulting new features.
+
+We can approximate the growth of the number of new features we get with all quadratic terms with $\mathcal{O}(n^2/2)$. And if you wanted to include all cubic terms in your hypothesis, the features would grow asymptotically at $\mathcal{O}(n^3)$. These are very steep growths, so as the number of our features increase, the number of quadratic or cubic features increase very rapidly and becomes quickly impractical.
+
+Example: let our training set be a collection of 50 x 50 pixel black-and-white photographs, and our goal will be to classify which ones are photos of cars. Our feature set size is then n = 2500 if we compare every pair of pixels.
+
+Now let's say we need to make a quadratic hypothesis function. With quadratic features, our growth is $\mathcal{O}(n^2/2)$. So our total features will be about $2500^2 / 2 = 3125000 $, which is very impractical.
+
+Neural networks offers an alternate way to perform machine learning when we have complex hypotheses with many features.
+
+\section{Neurons and the Brain}
+
+Neural networks are limited imitations of how our own brains work. They've had a big recent resurgence because of advances in computer hardware.
+
+There is evidence that \textbf{the brain uses only one ``learning algorithm"} for all its different functions. Scientists have tried cutting (in an animal brain) the connection between the ears and the auditory cortex and rewiring the optical nerve with the auditory cortex to find that the auditory cortex literally learns to see.
+
+This principle is called ``\textbf{neuroplasticity}" and has many examples and experimental evidence.
+
+\section{Model Representation I}
+Let's examine how we will represent a hypothesis function using neural networks.
+
+At a very simple level, neurons are basically computational units that take input (\textbf{dendrites}) as electrical input (called ``\textbf{spikes}") that are channeled to outputs (\textbf{axons}).
+
+In our model, our dendrites are like the input features $x_1\cdots x_n$, and the output is the result of our hypothesis function:
+
+In this model our $x0$ input node is sometimes called the ``bias unit." It is always equal to 1.
+
+In neural networks, we use the same logistic function as in classification: $\frac{1}{1 + e^{-\theta^Tx}} $. In neural networks however we sometimes call it a \textbf{sigmoid} (logistic) activation function.
+
+Our ``theta" parameters are sometimes instead called \textbf{weights} in the neural networks model.
+
+Visually, a simplistic representation looks like:
+\[ [x_0x_1x_2]\rightarrow [\quad] \rightarrow h_\theta (x) \]
