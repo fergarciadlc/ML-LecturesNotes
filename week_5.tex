@@ -8,6 +8,82 @@ Let's first define a few variables that we will need to use:
 \end{itemize}
 Recall that the cost function for regularized logistic regression was:
 \begin{equation}
-J(\theta) = - \frac{1}{m} \sum_{i=1}^m \large[ y^{(i)}\ \log (h_\theta (x^{(i)})) + (1 - y^{(i)})\ \log (1 - h_\theta(x^{(i)}))\large] + \frac{\lambda}{2m}\sum_{j=1}^n \theta_j^2
+J(\theta) = - \frac{1}{m} \sum_{i=1}^m \left[ y^{(i)}\ \log \left(h_\theta (x^{(i)})\right) + (1 - y^{(i)})\ \log \left(1 - h_\theta(x^{(i)})\right)\right] + \frac{\lambda}{2m}\sum_{j=1}^n \theta_j^2
 \end{equation}
 For neural  networks, it is going to bee slightly more complicated:
+\begin{multline}
+J(\Theta) = - \frac{1}{m} \sum_{i=1}^m \sum_{k=1}^K \left[y^{(i)}_k \log ((h_\Theta (x^{(i)}))_k) + (1 - y^{(i)}_k)\log (1 - (h_\Theta(x^{(i)}))_k)\right] + \cdots \\
+\cdots + \frac{\lambda}{2m}\sum_{l=1}^{L-1} \sum_{i=1}^{s_l} \sum_{j=1}^{s_{l+1}} ( \Theta_{j,i}^{(l)})^2
+\end{multline}
+
+We have added a few nested summations to account for our multiple output nodes. In the first part of the equation, between the square brackets, we have an additional nested summation that loops through the number of output nodes.
+
+In the regularization part, after the square brackets, we must account for multiple theta matrices. The number of columns in our current theta matrix is equal to the number of nodes in our current layer (including the bias unit). The number of rows in our current theta matrix is equal to the number of nodes in the next layer (excluding the bias unit). As before with logistic regression, we square every term.
+
+Note:
+\begin{itemize}
+	\item The double sum simply adds up the logistic regression costs calculated for each cell in the output layer; and 
+	\item The triple sum simply adds up the squares of all the individual $\Theta$'s in the entire network.
+	\item The $i$ in the triple sum \textbf{does not} refer to training example i
+\end{itemize}
+
+\section{Backpropagation Algorithm}
+\textbf{Backpropagation} is neural-network terminology for minimizing our cost function, just like what we were doing with gradient descent in logistic and linear regression.
+
+Our goal is to compute: $$ \min_\Theta J(\Theta) $$
+
+That is, we want to minimize our cost function J using an optimal set of parameters in theta.
+
+In this section we'll look at the equations we use to compute the partial derivative of $J(\Theta)$:
+
+$$\dfrac{\partial}{\partial \Theta_{i,j}^{(l)}}J(\Theta) $$
+In back propagation we're going to compute for every node:
+
+$$\delta_j^{(l)}$$
+
+Recall that $a_j^{(l)}$ is activation node j in layer l.
+
+For the last layer, we can compute the vector of delta values with:
+
+$$\delta^{(L)} = a^{(L)} - y$$
+
+Where L is our total number of layers and $a^{(L)}$ is the vector of outputs of the activation units for the last layer. So our "error values" for the last layer are simply the differences of our actual results in the last layer and the correct outputs in y.
+
+To get the delta values of the layers before the last layer, we can use an equation that steps us back from right to left:
+
+$$\delta^{(l)} = ((\Theta^{(l)})^T \delta^{(l+1)})\ .*\ g'(z^{(l)})$$
+
+The delta values of layer l are calculated by multiplying the delta values in the next layer with the theta matrix of layer l. We then element-wise multiply that with a function called g', or g-prime, which is the derivative of the activation function g evaluated with the input values given by $z(l)$.
+
+The g-prime derivative terms can also be written out as:
+
+$$g'(u) = g(u)\ .*\ (1 - g(u))$$
+The full back propagation equation for the inner nodes is then:
+
+$$\delta^{(l)} = ((\Theta^{(l)})^T \delta^{(l+1)})\ .*\ a^{(l)}\ .*\ (1 - a^{(l)})$$
+A. Ng states that the derivation and proofs are complicated and involved, but you can still implement the above equations to do back propagation without knowing the details.
+
+We can compute our partial derivative terms by multiplying our activation values and our error values for each training example t:
+
+$$\dfrac{\partial J(\Theta)}{\partial \Theta_{i,j}^{(l)}} = \frac{1}{m}\sum_{t=1}^m a_j^{(t)(l)} {\delta}_i^{(t)(l+1)} $$
+This however ignores regularization, which we'll deal with later.
+
+Note: $\delta^{l+1}$ and $a^{l+1}$ are vectors with $s_{l+1}$ elements. Similarly, $\ a^{(l)}$ is a vector with $s_l$ elements. Multiplying them produces a matrix that is $s_{l+1}$ by $s_l$ which is the same dimension as $\Theta^{(l)}$. That is, the process produces a gradient term for every element in $\Theta^{(l)}$. (Actually, $\Theta^{(l)}$ has $s_{l} + 1$ column, so the dimensionality is not exactly the same).
+
+We can now take all these equations and put them together into a backpropagation algorithm:
+
+\subsection{Back propagation Algorithm}
+Given training set $\lbrace (x^{(1)}, y^{(1)}) \cdots (x^{(m)}, y^{(m)})\rbrace$
+$$\text{Set } \Delta^{(l)}_{i,j} := 0\quad \text{for all } (l,i,j) $$
+For training example t=1 to m:
+\begin{itemize}
+	\item Set $a^{(1)} := x^{(t)}$
+	\item Perform forward propagation to compute $a^{(l)}$ for l=2,3,…,L
+	\item Using $y^{(t)}$, compute $\delta^{(L)} = a^{(L)} - y^{(t)}$
+	\item Compute $\delta^{(L-1)}, \delta^{(L-2)},\dots,\delta^{(2)}$ using $\delta^{(l)} = ((\Theta^{(l)})^T \delta^{(l+1)})\ .*\ a^{(l)}\ .*\ (1 - a^{(l)})$
+	\item $\Delta^{(l)}_{i,j} := \Delta^{(l)}_{i,j} + a_j^{(l)} \delta_i^{(l+1)}$ or with vectorization,$ \Delta^{(l)} := \Delta^{(l)} + \delta^{(l+1)}(a^{(l)})^T$
+	\item $ D^{(l)}_{i,j} := \dfrac{1}{m}\left(\Delta^{(l)}_{i,j} + \lambda\Theta^{(l)}_{i,j}\right)$ If $j \neq 0$ \textbf{NOTE}: Typo in lecture slide omits outside parentheses. This version is correct.
+	\item $ D^{(l)}_{i,j} := \dfrac{1}{m}\Delta^{(l)}_{i,j}$
+\end{itemize}
+
+\section{Backpropagation Intuition}
