@@ -113,7 +113,7 @@ Compute two sets of 20 indexes evenly spaced. One over the original height and o
 rowIndex = min(round(((1:newSize(1))-0.5)./scale(1)+0.5), finalSize(1));
 colIndex = min(round(((1:newSize(2))-0.5)./scale(2)+0.5), finalSize(2));
 \end{verbatim}
-Copy just the indexed values from old image to get new image of 20 x 20 real numbers. This is called "sampling" because it copies just a sample pixel indexed by a grid. All the sample pixels make the new image.
+Copy just the indexed values from old image to get new image of 20 x 20 real numbers. This is called ``sampling" because it copies just a sample pixel indexed by a grid. All the sample pixels make the new image.
 
 \begin{verbatim}
 % Copy just the indexed values from old image to get new image
@@ -265,7 +265,7 @@ vectorImage = reshape(contrastedImage, 1, newSize(1)*newSize(2));
 end
 \end{Verbatim}
 \section{Photo Gallery}
-\begin{figure}[h]
+\begin{figure}[ht]
      \centering
      \begin{subfigure}[b]{0.47\textwidth}
          \centering

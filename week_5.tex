@@ -85,7 +85,7 @@ For training example t=1 to m:
 	\item $ D^{(l)}_{i,j} := \dfrac{1}{m}\left(\Delta^{(l)}_{i,j} + \lambda\Theta^{(l)}_{i,j}\right)$ If $j \neq 0$ \textbf{NOTE}: Typo in lecture slide omits outside parentheses. This version is correct.
 	\item $ D^{(l)}_{i,j} := \dfrac{1}{m}\Delta^{(l)}_{i,j}$
 \end{itemize}
-The capital-delta matrix is used as an "accumulator" to add up our values as we go along and eventually compute our partial derivative.
+The capital-delta matrix is used as an ``accumulator" to add up our values as we go along and eventually compute our partial derivative.
 
 The actual proof is quite involved, but, the $D^{(l)}_{i,j}$ terms are the partial derivatives and the results we are looking for:
 \begin{equation}
@@ -123,7 +123,7 @@ With neural networks, we are working with sets of matrices:
 D^{(1)}, D^{(2)}, D^{(3)}, \dots
 \end{align*}
 
-In order to use optimizing functions such as \verb|fminunc()|, we will want to "unroll" all the elements and put them into one long vector:
+In order to use optimizing functions such as \verb|fminunc()|, we will want to ``unroll" all the elements and put them into one long vector:
 \begin{verbatim}
 thetaVector = [ Theta1(:); Theta2(:); Theta3(:); ]
 deltaVector = [ D1(:); D2(:); D3(:) ]
@@ -339,7 +339,7 @@ g =
      0.0031675
     -0.0064244
 \end{verbatim}
-Now create a script that uses the 'ex5data1.mat' from ex5, but without creating the polynomial terms. With 8 units in the hidden layer and MaxIter set to 200, you should be able to get a final cost value of 0.3 to 0.4. The results will vary a bit due to the random Theta initialization. If you plot the training set and the predicted values for the training set (using your predictLinear() function), you should have a good match.
+Now create a script that uses the `ex5data1.mat' from ex5, but without creating the polynomial terms. With 8 units in the hidden layer and MaxIter set to 200, you should be able to get a final cost value of 0.3 to 0.4. The results will vary a bit due to the random Theta initialization. If you plot the training set and the predicted values for the training set (using your predictLinear() function), you should have a good match.
 \section{Deriving the Sigmoid Gradient Function}
 We let the sigmoid function be $\sigma(x) = \frac{1}{1 + e^{-x}}$
 
