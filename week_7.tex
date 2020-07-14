@@ -196,7 +196,7 @@ $$x^{(i)} \rightarrow f^{(i)}_1=similarity(x^{(i)},l^{(1)})f^{(i)}_2$$
 $$=similarity(x^{(i)},l^{(2)})\cdots f^{(i)}_m$$
 $$=similarity(x^{(i)},l^{(m)})$$
 
-Now to get the parameters Θ we can use the \textbf{SVM} minimization algorithm but with $f^{(i)}$ substituted in for $x^{(i)}$:
+Now to get the parameters $\Theta$ we can use the \textbf{SVM} minimization algorithm but with $f^{(i)}$ substituted in for $x^{(i)}$:
 $$
 \min_{\Theta} C \sum_{i=1}^m y^{(i)}\text{cost}_1(\Theta^Tf^{(i)}) + (1 - y^{(i)})\text{cost}_0(\theta^Tf^{(i)}) + \dfrac{1}{2}\sum_{j=1}^n \Theta^2_j
 $$
@@ -220,12 +220,12 @@ There are lots of good SVM libraries already written. A. Ng often uses `\textbf{
 
 In practical application, the choices you do need to make are:
 \begin{itemize}
-\item Choice of parameter C
-\teim Choice of kernel (similarity function)
-\item No kernel (``linear" kernel) -- gives standard linear classifier
-\item Choose when n is large and when m is small
-\item Gaussian Kernel (above) -- need to choose $\sigma^2$ 
-\item Choose when n is small and m is large
+	\item Choice of parameter C
+	\item Choice of kernel (similarity function)
+	\item No kernel (``linear" kernel) -- gives standard linear classifier
+	\item Choose when n is large and when m is small
+	\item Gaussian Kernel (above) -- need to choose $\sigma^2$ 
+	\item Choose when n is small and m is large
 \end{itemize}
 
 The library may ask you to provide the kernel function.

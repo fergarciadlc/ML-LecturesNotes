@@ -1,0 +1,107 @@
+\chapter{Week 8}
+\section{Machine Learning: Clustering}
+\section{Unsupervised Learning: Introduction}
+Unsupervised learning is contrasted from supervised learning because it uses an unlabeled training set rather than a labeled one.
+
+In other words, we don't have the vector y of expected results, we only have a dataset of features where we can find structure.
+
+Clustering is good for:
+\begin{itemize}
+	\item Market segmentation
+	\item Social network analysis
+	\item Organizing computer clusters
+	\item Astronomical data analysis
+\end{itemize}
+
+\section{K-Means Algorithm}
+The K-Means Algorithm is the most popular and widely used algorithm for automatically grouping data into coherent subsets.
+\begin{enumerate}
+	\item Randomly initialize two points in the dataset called the cluster centroids.
+	\item Cluster assignment: assign all examples into one of two groups based on which cluster centroid the example is closest to.
+	\item Move centroid: compute the averages for all the points inside each of the two cluster centroid groups, then move the cluster centroid points to those averages.
+	\item Re-run (2) and (3) until we have found our clusters.
+\end{enumerate}
+Our main variables are:
+\begin{itemize}
+	\item K (number of clusters)
+	\item Training set $ x^{(1)}, x^{(2)}, \dots, x^{(m)} $
+	\item Where $x^{(i)} \in \mathbb{R}^n$
+\end{itemize}
+
+Note that we will not use the x0=1 convention.
+
+\subsection{The algorithm:}
+\begin{verbatim}
+Randomly initialize K cluster centroids mu(1), mu(2), ..., mu(K)
+Repeat:
+   for i = 1 to m:
+      c(i):= index (from 1 to K) of cluster centroid closest to x(i)
+   for k = 1 to K:
+      mu(k):= average (mean) of points assigned to cluster k
+\end{verbatim}
+The \textbf{first for-loop} is the `Cluster Assignment' step. We make a vector c where c(i) represents the centroid assigned to example x(i).
+
+We can write the operation of the Cluster Assignment step more mathematically as follows:
+
+\begin{equation}
+c^{(i)} = argmin_k\ ||x^{(i)} - \mu_k||^2
+\end{equation}
+
+That is, each $c^{(i)}$ contains the index of the centroid that has minimal distance to $x^{(i)}$.
+
+By convention, we square the right-hand-side, which makes the function we are trying to minimize more sharply increasing. It is mostly just a convention. But a convention that helps reduce the computation load because the Euclidean distance requires a square root but it is canceled.
+
+Without the square:
+\begin{equation}
+||x^{(i)} - \mu_k|| = ||\quad\sqrt{(x_1^i - \mu_{1(k)})^2 + (x_2^i - \mu_{2(k)})^2 + (x_3^i - \mu_{3(k)})^2 + ...}\quad||
+\end{equation}
+
+With the square:
+\begin{equation}
+||x^{(i)} - \mu_k||^2 = ||\quad(x_1^i - \mu_{1(k)})^2 + (x_2^i - \mu_{2(k)})^2 + (x_3^i - \mu_{3(k)})^2 + ...\quad||
+\end{equation}
+...so the square convention serves two purposes, minimize more sharply and less computation.
+
+The \textbf{second for-loop} is the `Move Centroid' step where we move each centroid to the average of its group.
+
+More formally, the equation for this loop is as follows:
+\begin{equation}
+\mu_k = \dfrac{1}{n}[x^{(k_1)} + x^{(k_2)} + \dots + x^{(k_n)}] \in \mathbb{R}^n
+\end{equation}
+If you have a cluster centroid with \textbf{0 points} assigned to it, you can randomly \textbf{re-initialize} that centroid to a new point. You can also simply \textbf{eliminate} that cluster group.
+
+After a number of iterations the algorithm will \textbf{converge}, where new iterations do not affect the clusters.
+
+Note on non-separated clusters: some datasets have no real inner separation or natural structure. K-means can still evenly segment your data into K subsets, so can still be useful in this case.
+\section{Optimization Objective}
+Recall some of the parameters we used in our algorithm:
+\begin{itemize}
+	\item $c^{(i)}$ = index of cluster (1,2,...,K) to which example x(i) is currently assigned
+	\item $\mu_k$ = cluster centroid $k(\mu k\in \mathbb{R}n)$
+	\item $\mu_{c^{(i)}}$ = cluster centroid of cluster to which example x(i) has been assigned
+\end{itemize}
+
+Using these variables we can define our cost function:
+\begin{equation}
+J(c^{(i)},\dots,c^{(m)},\mu_1,\dots,\mu_K) = \dfrac{1}{m}\sum_{i=1}^m ||x^{(i)} - \mu_{c^{(i)}}||^2
+\end{equation}
+Our optimization objective is to minimize all our parameters using the above cost function:
+
+$$min_{c,\mu}\ J(c,\mu)$$
+That is, we are finding all the values in sets c, representing all our clusters, and $\mu$, representing all our centroids, that will minimize the \textbf{average of the distances} of every training example to its corresponding cluster centroid.
+
+The above cost function is often called the \textbf{distortion} of the training examples.
+
+In the \textbf{cluster assignment step}, our goal is to:
+\begin{itemize}
+	\item Minimize J(…) with $c^{(1)},\dots,c^{(m)}$ (holding $\mu_1,\dots,\mu_K$ fixed)
+\end{itemize}
+
+In the move centroid step, our goal is to:
+\begin{itemize}
+	\item Minimize J(…) with $\mu_1,\dots,\mu_K$
+\end{itemize}
+
+With k-means, it \textbf{is not possible for the cost function to sometimes increase}. It should always descend.
+
+\section{Random Initialization}
