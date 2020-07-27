@@ -105,3 +105,190 @@ In the move centroid step, our goal is to:
 With k-means, it \textbf{is not possible for the cost function to sometimes increase}. It should always descend.
 
 \section{Random Initialization}
+There's one particular recommended method for randomly initializing your cluster centroids.
+\begin{enumerate}
+	\item Have K<m, That is, make sure the number pf your clusters is less than the number of your training examples.
+	\item Randomly pick K training examples. (No mentioned in the lecture, but also be sure the selected examples are unique).
+	\item Set $\mu_1, \dots, \mu_k$ equal to these K examples.
+\end{enumerate}
+
+K-means {\bf can get stuck in local optima}. To decrease the chance of this happening, you can run the algorithm on many different random initializations. In cases where K<10 it is strongly recommended to run a loop of random initializations.
+\begin{verbatim}
+	for i = 1 to 100:
+   randomly initialize k-means
+   run k-means to get 'c' and 'm'
+   compute the cost function (distortion) J(c,m)
+pick the clustering that gave us the lowest cost
+\end{verbatim}
+
+\section{Choosing the Number of Clusters}
+Choosing K can be quite arbitrary and ambiguous.
+
+\textbf{The elbow method}: plot the cost J and the number of clusters K. The cost function should reduce as we increase the number of clusters, and then flatten out. Choose K at the point where the cost function starts to flatten out.
+
+However, fairly often, the curve is \textbf{very gradual}, so there's no clear elbow.
+
+\textbf{NOTE}: J will \textbf{always} decrease as K is increased. The one exception is if k-means gets stuck at a bad local optimum.
+
+Another way to choose K is to observe how well k-means performs on a \textbf{downstream purpose}. In other words, you choose K that proves to be most useful for some goal you're trying to achieve from using these clusters.
+
+\section{Bonus: Discussion of the drawbacks of K-Means}
+This links to a discussion that shows various situations in which K-means gives totally correct but unexpected results:
+\href{http://stats.stackexchange.com/questions/133656/how-to-understand-the-drawbacks-of-k-means}{Unexpected results of K-means}
+\section{ML:Dimensionality Reduction}
+\subsection{Motivation I: Data Compression}
+\begin{itemize}
+	\item We may want to reduce the dimension of our features if we have a lot of redundant data.
+	\item To do this, we find two highly correlated features, plot them, and make a new line that seems to describe both features accurately. We place all the new features on this single line.
+\end{itemize}
+Doing dimensionality reduction will reduce the total data we have to store in computer memory and will speed up our learning algorithm.
+
+Note: in dimensionality reduction, we are reducing our features rather than our number of examples. Our variable m will stay the same size; n, the number of features each example from $x^{(1)}$ to $x^{(m)}$ carries, will be reduced.
+\subsection{Motivation II: Visualization}
+It is not easy to visualize data that is more than three dimensions. We can reduce the dimensions of our data to 3 or less in order to plot it.
+
+We need to find new features, $z_1, z_2$, (and perhaps $z_3$) that can effectively \textbf{summarize} all the other features.
+
+Example: hundreds of features related to a country's economic system may all be combined into one feature that you call ``Economic Activity".
+\section{Principal Component Analysis Problem Formulation}
+The most popular dimensionality reduction algorithm is \textit{Principal Component Analysis} (PCA)
+\subsection{Problem Formulation}
+Given two features, $x_1$ and $x_2$, we want to find a single line that effectively describes both features at once. We then map our old features onto this new line to get a new single feature.
+
+The same can be done with three features, where we map them to a plane.
+
+The \textbf{goal of PCA} is to \textbf{reduce} the average of all the distances of every feature to the projection line. This is the projection error.
+
+Reduce from 2d to 1d: find a direction (a vector $u^{(1)} \in \mathbb{R}^n$) onto which to project the data so as to minimize the projection error.
+
+The more general case is as follows:
+
+Reduce from n-dimension to k-dimension: Find k vectors $u^{(1)}, u^{(2)}, \dots, u^{(k)}$ onto which to project the data so as to minimize the projection error.
+
+If we are converting from 3d to 2d, we will project our data onto two directions (a plane), so k will be 2.
+\subsection{PCA is not linear regression}
+\begin{itemize}
+	\item In linear regression, we are minimizing the \textbf{squared error} from every point to our predictor line. These are vertical distances.
+	\item In PCA, we are minimizing the \textbf{shortest distance}, or shortest orthogonal distances, to our data points.
+\end{itemize}
+More generally, in linear regression we are taking all our examples in x and applying the parameters in $\Theta$ to predict y.
+
+In PCA, we are taking a number of features $x_1, x_2, \dots, x_n$, and finding a closest common dataset among them. We aren't trying to predict any result and we aren't applying any theta weights to the features.
+\section{Principal Component Analysis Algorithm}
+Before we can apply PCA, there is a data pre-processing step we must perform:
+\subsection{Data preprocessing}
+\begin{itemize}
+	\item Given training set: $x(1),x(2),\dots,x(m)$
+	\item Preprocess (feature scaling/mean normalization): $$\mu_j = \dfrac{1}{m}\sum^m_{i=1}x_j^{(i)} $$
+	\item Replace each $x_j^{(i)}$ with $x_j^{(i)} - \mu_j$
+	\item If different features on different scales (e.g., $x_1$ = size of house, $x_2 $ = number of bedrooms), scale features to have comparable range of values.
+\end{itemize}
+Above, we first subtract the mean of each feature from the original feature. Then we scale all the features $$x_j^{(i)} = \dfrac{x_j^{(i)} - \mu_j}{s_j}$$
+
+We can define specifically what it means to reduce from 2d to 1d data as follows:
+$$ \Sigma = \dfrac{1}{m}\sum^m_{i=1}(x^{(i)})(x^{(i)})^T $$
+
+The z values are all real numbers and are the projections of our features onto $u^{(1)}$.
+
+So, PCA has two tasks: figure out $u^{(1)},\dots,u^{(k)}$ and also to find $z_1, z_2, \dots, z_m$.
+
+The mathematical proof for the following procedure is complicated and beyond the scope of this course.
+\subsection{1. Compute ``coviariance matrix''}
+\begin{equation}
+\Sigma = \dfrac{1}{m}\sum^m_{i=1}(x^{(i)})(x^{(i)})^T
+\end{equation}
+This can be vectorized in Octave as: \\
+\verb|Sigma = (1/m) * X' * X;| \\
+
+We denote the covariance matrix with a capital sigma (which happens to be the same symbol for summation, confusingly---they represent entirely different things).
+
+Note that $x^{(i)}$ is an nx1 vector, ($x^{(i)})^T$ is an 1xn vector and X is a mxn matrix (row-wise stored examples). The product of those will be an nxn matrix, which are the dimensions of $\Sigma$.
+
+\section{2. Compute ``eigenvectors" of covariance matrix Sigma}
+\verb|[U,S,V] = svd(Sigma);|
+
+svd() is the 'singular value decomposition', a built-in Octave function.
+
+What we actually want out of svd() is the 'U' matrix of the Sigma covariance matrix: $U \in \mathbb{R}^{n \times n} $. U contains $u^{(1)},\dots,u^{(n)}$, which is exactly what we want.
+
+\subsection{3. Take the first k columns of the U matrix and compute z}
+We'll assign the first k columns of U to a variable called `Ureduce'. This will be an nxk matrix. We compute z with:
+
+$$z^{(i)} = Ureduce^T \cdot x^{(i)}$$
+
+\textit{UreduceZ} will have dimensions kxn while x(i) will have dimensions nx1. The product $Ureduce^T \cdot x^{(i)}$ will have dimensions kx1.
+
+To summarize, the whole algorithm in octave is roughly:
+
+\begin{verbatim}
+	Sigma = (1/m) * X' * X; % compute the covariance matrix
+	[U,S,V] = svd(Sigma);   % compute our projected directions
+	Ureduce = U(:,1:k);     % take the first k directions
+	Z = X * Ureduce;        % compute the projected data points
+\end{verbatim}
+\section{Reconstruction from Compressed Representation}
+If we use PCA to compress our data, how can we uncompress our data, or go back to our original number of features?
+
+To go from 1-dimension back to 2d we do: $z \in \mathbb{R} \rightarrow x \in \mathbb{R}^2$.
+
+We can do this with the equation: $x_{approx}^{(1)} = U_{reduce} \cdot z^{(1)}$.
+
+Note that we can only get approximations of our original data.
+
+Note: It turns out that the U matrix has the special property that it is a Unitary Matrix. One of the special properties of a Unitary Matrix is:
+
+$U^{-1} = U^{*}$ where the ``*" means ``conjugate transpose".
+
+Since we are dealing with real numbers here, this is equivalent to:
+
+$U^{-1} = U^T$ So we could compute the inverse and use that, but it would be a waste of energy and compute cycles.
+
+\section{Choosing the Number of Principal Components}
+How do we choose k, also called the number of principal components? Recall that k is the dimension we are reducing to.
+
+One way to choose k is by using the following formula:
+
+\begin{itemize}
+	\item Given the average squared projection error: $$\dfrac{1}{m}\sum^m_{i=1}||x^{(i)} - x_{approx}^{(i)}||^2$$
+	\item Also given the total variation in the data: $$\dfrac{1}{m}\sum^m_{i=1}||x^{(i)}||^2 $$
+	\item Choose k to be the smallest value such that: $$\dfrac{\dfrac{1}{m}\sum^m_{i=1}||x^{(i)} - x_{approx}^{(i)}||^2}{\dfrac{1}{m}\sum^m_{i=1}||x^{(i)}||^2} \leq 0.01 $$
+\end{itemize}
+
+In other words, the squared projection error divided by the total variation should be less than one percent, so that \textbf{99\% of the variance is retained}.
+\subsection{Algorithm for choosing k}
+\begin{enumerate}
+	\item Try PCA with $k=1,2,\dots$
+	\item Compute $U_{reduce}, z, x$
+	\item Check the formula given above that 99\% of the variance is retained. If not, go to step one and increase k.
+\end{enumerate}
+This procedure would actually be horribly inefficient. In Octave, we will call svd:
+
+\verb|[U,S,V] = svd(Sigma)|
+
+Which gives us a matrix S. We can actually check for 99\% of retained variance using the S matrix as follows:
+
+$$\dfrac{\sum_{i=1}^kS_{ii}}{\sum_{i=1}^nS_{ii}} \geq 0.99 $$
+\section{Advice for Applying PCA}
+The most common use of PCA is to speed up supervised learning.
+
+Given a training set with a large number of features (e.g. $x^{(1)},\dots,x^{(m)} \in \mathbb{R}^{10000}$) we can use PCA to reduce the number of features in each example of the training set (e.g. $z^{(1)},\dots,z^{(m)} \in \mathbb{R}^{1000}$).
+
+Note that we should define the PCA reduction from $x^{(i)}$ only on the training set and not on the cross-validation or test sets. You can apply the mapping $z(i)$ to your cross-validation and test sets after it is defined on the training set.
+
+\subsection{Applications}
+\begin{itemize}
+	\item Compressions
+	\begin{itemize}
+		\item Reduce space of data
+		\item Speed up algorithm
+	\end{itemize}
+	\item Visualization of data
+	\begin{itemize}
+		\item Choose k = 2 or k = 3
+	\end{itemize}
+\end{itemize}
+
+\textbf{Bad use of PCA}:
+trying to prevent overfitting. We might think that reducing the features with PCA would be an effective way to address overfitting. It might work, but is not recommended because it does not consider the values of our results y. Using just regularization will be at least as effective.
+
+Don't assume you need to do PCA. \textbf{Try your full machine learning algorithm without PCA first}. Then use PCA if you find that you need it.
