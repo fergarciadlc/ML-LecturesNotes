@@ -1,0 +1,298 @@
+\chapter{ML - Anomaly Detection}
+
+\section{Problem Motivation}
+Just like in other learning problems, we are given a dataset ${x^{(1)}, x^{(2)},\dots,x^{(m)}}$.
+
+We are then given a new example, $x_{test}$, and we want to know whether this new example is abnormal/anomalous.
+
+We define a ``model" p(x) that tells us the probability the example is not anomalous. We also use a threshold $\epsilon$ (epsilon) as a dividing line so we can say which examples are anomalous and which are not.
+
+A very common application of anomaly detection is detecting fraud:
+
+\begin{itemize}
+\item $x^{(i)} = $features of user i's activities.
+\item Model p(x) from the data.
+\item Identify unusual users by checking $ p(x) < \epsilon$
+\end{itemize}
+
+If our anomaly detector is flagging \textbf{too many} anomalous examples, then we need to \textbf{decrease} our threshold $\epsilon$
+
+\section{Gaussian Distribution}
+The Gaussian Distribution is a familiar bell-shaped curve that can be described by a function 
+$$\mathcal{N}(\mu,\sigma^2)$$
+
+Let $x\in \mathbb{R}$. If the probability distribution of x is Gaussian with mean $\mu$, variance $\sigma^2$, then:
+
+\begin{equation}
+x \sim \mathcal{N}(\mu, \sigma^2)
+\end{equation}
+
+The little $\sim$ or `tilde' can be read as ``distributed as".
+
+
+The Gaussian Distribution is parameterized by a mean and a variance.
+
+$\mu$, describes the center of the curve, called the mean. The width of the curve is described by $\sigma$, called the standard deviation.
+
+The full function is as follows:
+
+\begin{equation}
+p(x;\mu,\sigma^2) = \dfrac{1}{\sigma\sqrt{(2\pi)}}e^{-\dfrac{1}{2}(\dfrac{x - \mu}{\sigma})^2}
+\end{equation}
+
+We can estimate the parameter $\mu$ from a given dataset by simply taking the average of all the examples:
+\begin{equation}
+\mu = \dfrac{1}{m}\displaystyle \sum_{i=1}^m x^{(i)}
+\end{equation}
+
+We can estimate the other parameter, $\sigma^2$, with our familiar squared error formula:
+\begin{equation}
+\sigma^2 = \dfrac{1}{m}\displaystyle \sum_{i=1}^m(x^{(i)} - \mu)^2
+\end{equation}
+
+\section{Algorithm}
+Given a training set of examples, $\lbrace x^{(1)},\dots,x^{(m)}\rbrace $ where each example is a vector, $x \in \mathbb{R}$.
+\begin{equation}
+p(x) = p(x_1;\mu_1,\sigma_1^2)p(x_2;\mu_2,\sigma^2_2)\cdots p(x_n;\mu_n,\sigma^2_n)
+\end{equation}
+
+\subsection{The algorithm}
+Choose features $x_i$ that you think might be indicative of anomalous examples.
+
+Fit parameters $\mu_1,\dots,\mu_n,\sigma_1^2,\dots,\sigma_n^2$
+
+Calculate $\mu_j = \dfrac{1}{m}\displaystyle \sum_{i=1}^m x_j^{(i)}$
+
+Calculate $\sigma^2_j = \dfrac{1}{m}\displaystyle \sum_{i=1}^m(x_j^{(i)} - \mu_j)^2$
+
+Given a new example x, compute p(x):
+\begin{equation}
+p(x) = \displaystyle \prod^n_{j=1} p(x_j;\mu_j,\sigma_j^2) = \prod\limits^n_{j=1} \dfrac{1}{\sqrt{2\pi}\sigma_j}exp(-\dfrac{(x_j - \mu_j)^2}{2\sigma^2_j})
+\end{equation}
+
+{\bf Anomaly} if $p(x) < \epsilon$
+
+A vectorized version of the calculation for $\mu$ is $\mu = \dfrac{1}{m}\displaystyle \sum_{i=1}^m x^{(i)}$
+
+You can vectorize $\sigma^2$ similarly.
+
+\section{Developing and Evaluating an Anomaly Detection System}
+To evaluate our learning algorithm, we take some labeled data, categorized into anomalous and non-anomalous examples ( y = 0 if normal, y = 1 if anomalous).
+
+Among that data, take a large proportion of good, non-anomalous data for the training set on which to train p(x).
+
+Then, take a smaller proportion of mixed anomalous and non-anomalous examples (you will usually have many more non-anomalous examples) for your cross-validation and test sets.
+
+For example, we may have a set where 0.2\% of the data is anomalous. We take 60\% of those examples, all of which are good (y=0) for the training set. We then take 20\% of the examples for the cross-validation set (with 0.1\% of the anomalous examples) and another 20\% from the test set (with another 0.1\% of the anomalous).
+
+In other words, we split the data 60/20/20 training/CV/test and then split the anomalous examples 50/50 between the CV and test sets.
+
+\subsection{Algorithm evaluation}
+
+Fit model $p(x)$ on training set $\lbrace x^{(1)},\dots,x^{(m)} \rbrace$.
+
+On a cross validation/test example x, predict:
+
+If $p(x) < \epsilon$ (\textbf{anomaly}), then y=1
+
+If $p(x) \geq \epsilon $(\textbf{normal}), then y=0
+
+Possible evaluation metrics (see ``Machine Learning System Design" section):
+
+\begin{itemize}
+\item True positive, false positive, false negative, true negative.
+\item Precision/recall
+\item $F_1$ score 
+\end{itemize}
+
+Note that we use the cross-validation set to choose parameter $\epsilon$
+
+\section{Anomaly Detection vs. Supervised Learning}
+When do we use anomaly detection and when do we use supervised learning?
+
+\subsection{Use anomaly detection when...}
+\begin{itemize}
+\item We have a very small number of positive examples (y=1 ... 0-20 examples is common) and a large number of negative (y=0) examples.
+\item We have many different ``types" of anomalies and it is hard for any algorithm to learn from positive examples what the anomalies look like; future anomalies may look nothing like any of the anomalous examples we've seen so far.
+\end{itemize}
+
+\subsection{Use supervised learning when...}
+\begin{itemize}
+\item We have a large number of both positive and negative examples. In other words, the training set is more evenly divided into classes.
+\item We have enough positive examples for the algorithm to get a sense of what new positives examples look like. The future positive examples are likely similar to the ones in the training set.
+\end{itemize}
+
+\section{Choosing What Features to Use}
+he features will greatly affect how well your anomaly detection algorithm works.
+
+We can check that our features are \textbf{gaussian} by plotting a histogram of our data and checking for the bell-shaped curve.
+
+Some \textbf{transforms} we can try on an example feature x that does not have the bell-shaped curve are:
+
+\begin{itemize}
+\item $\log(x)$
+\item $\log(x+1)$
+\item $\log(x+c)$ for some constant
+\item $\sqrt{x}$
+\item $x^{1/3}$
+\end{itemize}
+
+We can play with each of these to try and achieve the gaussian shape in our data.
+
+There is an \textbf{error analysis procedure} for anomaly detection that is very similar to the one in supervised learning.
+
+Our goal is for p(x) to be large for normal examples and small for anomalous examples.
+
+One common problem is when p(x) is similar for both types of examples. In this case, you need to examine the anomalous examples that are giving high probability in detail and try to figure out new features that will better distinguish the data.
+
+In general, choose features that might take on unusually large or small values in the event of an anomaly.
+
+\section{Multivariate Gaussian Distribution (Optional)}
+The multivariate gaussian distribution is an extension of anomaly detection and may (or may not) catch more anomalies.
+
+Instead of modeling $p(x_1),p(x_2),\dots$ separately, we will model p(x) all in one go. Our parameters will be: $\mu \in \mathbb{R}^n$, and $\Sigma \in \mathbb{R}^{n \times n}$
+
+\begin{equation}
+p(x;\mu,\Sigma) = \dfrac{1}{(2\pi)^{n/2} |\Sigma|^{1/2}} exp(-1/2(x-\mu)^T\Sigma^{-1}(x-\mu))
+\end{equation}
+
+The important effect is that we can model oblong gaussian contours, allowing us to better fit data that might not fit into the normal circular contours.
+
+Varying $\Sigma$ changes the shape, width, and orientation of the contours. Changing $\mu$ will move the center of the distribution.
+
+Check also:
+\begin{itemize}
+\item[[1]] \href{http://cs229.stanford.edu/section/gaussians.pdf}{The Multivariate Gaussian Distribution}, Chuong B. Do, October 10, 2008.
+\end{itemize}
+
+\section{Anomaly Detection using the Multivariate Gaussian Distribution (Optional)}
+When doing anomaly detection with multivariate gaussian distribution, we compute $\mu$ and $\Sigma$ normally. We then compute $p(x)$ using the new formula in the previous section and flag an anomaly if $p(x) < \epsilon$.
+
+The original model for $p(x)$ corresponds to a multivariate Gaussian where the contours of $p(x;\mu,\Sigma)$ are axis-aligned.
+
+The multivariate Gaussian model can automatically capture correlations between different features of $x$.
+
+However, the original model maintains some advantages: it is computationally cheaper (no matrix to invert, which is costly for large number of features) and it performs well even with small training set size (in multivariate Gaussian model, it should be greater than the number of features for $\Sigma$ to be invertible).
+
+\section{ML: Recommender Systems}
+\subsection{Problem Formulation}
+Recommendation is currently a very popular application of machine learning.
+
+Say we are trying to recommend movies to customers. We can use the following definitions:
+\begin{itemize}
+\item $n_u =$ number of users.
+\item $n_m =$ number of movies.
+\item $r(i,j) = 1$ if user $j$ has rated movie $i$.
+\item $y(i,j) = $ rating given by user $j$ to movie $i$ (defined only if $r(i,j) = 1$).
+\end{itemize}
+
+\subsection{Content Based Recommendations}
+We can introduce two features, $x_1$ and $x_2$ which represents how much romance or how much action a movie may have (on a scale of 0-1).
+
+One approach is that we could do linear regression for every single user. For each user $j$, learn a parameter $\theta^{(j)} \in \mathbb{R}^3$. Predict user $j$ as rating movie $i$ with $(\theta^{(j)})^Tx^{(i)}$ stars.
+
+\begin{itemize}
+\item $\theta^{(i)} = $ parameter vector for user $j$.
+\item $x^{(i)} = $ feature vector for movie $i$.
+\end{itemize}
+
+For user j, movie i, predicted rating: $(\theta^{(j)})^T(x^{(i)})$
+\begin{itemize}
+\item $m^{(j)} =$ number of movies rated by user $j$.
+\end{itemize}
+
+To learn $\theta^{(i)}$, we do the following:
+\begin{equation}
+min_{\theta^{(j)}} = \dfrac{1}{2}\displaystyle \sum_{i:r(i,j)=1} ((\theta^{(j)})^T(x^{(i)}) - y^{(i,j)})^2 + \dfrac{\lambda}{2} \sum_{k=1}^n(\theta_k^{(j)})^2
+\end{equation}
+
+This is our familiar linear regression. The base of the first summation is choosing all i such that $r(i,j) = 1$.
+
+To get the parameters for all our users, we do the following:
+
+\begin{equation}
+min_{\theta^{(1)},\dots,\theta^{(n_u)}} = \dfrac{1}{2}\displaystyle \sum_{j=1}^{n_u} \sum_{i:r(i,j)=1} ((\theta^{(j)})^T(x^{(i)}) - y^{(i,j)})^2 + \dfrac{\lambda}{2} \sum_{j=1}^{n_u} \sum_{k=1}^n(\theta_k^{(j)})^2
+\end{equation}
+
+We can apply our linear regression gradient descent update using the above cost function.
+
+The only real difference is that we \textbf{eliminate the constant} $\dfrac{1}{m}$.
+
+\section{Collaborative Filtering Algorithm}
+To speed things up, we can simultaneously minimize our features and our parameters:
+
+\begin{equation}
+J(x,\theta) = \dfrac{1}{2} \displaystyle \sum_{(i,j):r(i,j)=1}((\theta^{(j)})^Tx^{(i)} - y^{(i,j)})^2 + \dfrac{\lambda}{2}\sum_{i=1}^{n_m} \sum_{k=1}^{n} (x_k^{(i)})^2 + \dfrac{\lambda}{2}\sum_{j=1}^{n_u} \sum_{k=1}^{n} (\theta_k^{(j)})^2
+\end{equation}
+
+It looks very complicated, but we've only combined the cost function for theta and the cost function for x.
+
+Because the algorithm can learn them itself, the bias units where x0=1 have been removed, therefore $x\in \mathbb{R}n$ and $\theta \in \mathbb{R}n$.
+
+These are the steps in the algorithm:
+
+\begin{enumerate}
+\item Initialize $x^{(i)},...,x^{(n_m)},\theta^{(1)},...,\theta^{(n_u)}$ to small random values. This serves to break symmetry and ensures that the algorithm learns features $x^{(i)},...,x^{(n_m)}$ that are different from each other.
+\item Minimize $J(x^{(i)},...,x^{(n_m)},\theta^{(1)},...,\theta^{(n_u)})$ using gradient descent (or an advanced optimization algorithm).E.g. for every $j=1,...,n_u,i=1,...n_m$:$$x_k^{(i)} := x_k^{(i)} - \alpha\left (\displaystyle \sum_{j:r(i,j)=1}{((\theta^{(j)})^T x^{(i)} - y^{(i,j)}) \theta_k^{(j)}} + \lambda x_k^{(i)} \right)$$
+
+$$\theta_k^{(j)} := \theta_k^{(j)} - \alpha\left (\displaystyle \sum_{i:r(i,j)=1}{((\theta^{(j)})^T x^{(i)} - y^{(i,j)}) x_k^{(i)}} + \lambda \theta_k^{(j)} \right)$$
+\item For a user with parameters $\theta$ and a movie with (learned) features $x$, predict a star rating of $\theta^T$
+\end{enumerate}
+
+\section{Vectorization: Low Rank Matrix Factorization}
+Given matrices $X$ (each row containing features of a particular movie) and $\theta$ (each row containing the weights for those features for a given user), then the full matrix $Y$ of all predicted ratings of all movies by all users is given simply by: $Y = X\Theta^T$.
+
+Predicting how similar two movies $i$ and $j$ are can be done using the distance between their respective feature vectors $x$. Specifically, we are looking for a small value of $||x^{(i)} - x^{(j)}||$.
+
+\section{Implementation Detail: Mean Normalization}
+If the ranking system for movies is used from the previous lectures, then new users (who have watched no movies), will be assigned new movies incorrectly. Specifically, they will be assigned $\theta$ with all components equal to zero due to the minimization of the regularization term. That is, we assume that the new user will rank all movies 0, which does not seem intuitively correct.
+
+We rectify this problem by normalizing the data relative to the mean. First, we use a matrix Y to store the data from previous ratings, where the $i$th row of Y is the ratings for the $i$th movie and the $j$th column corresponds to the ratings for the $j$th user.
+
+We can now define a vector
+
+$$\mu = [\mu_1, \mu_2, \dots , \mu_{n_m}]$$
+
+such that
+$$
+\mu_i = \frac{\sum_{j:r(i,j)=1}{Y_{i,j}}}{\sum_{j}{r(i,j)}}$$
+
+Which is effectively the mean of the previous ratings for the $i$th movie (where only movies that have been watched by users are counted). We now can normalize the data by subtracting u, the mean rating, from the actual ratings for each user (column in matrix $Y$):
+
+As an example, consider the following matrix $Y$ and mean ratings $\mu$:
+
+\begin{equation}
+Y = 
+\begin{bmatrix}
+    5 & 5 & 0 & 0  \\
+    4 & ? & ? & 0  \\
+    0 & 0 & 5 & 4 \\
+    0 & 0 & 5 & 0 \\
+\end{bmatrix}, \quad
+ \mu = 
+\begin{bmatrix}
+    2.5 \\
+    2  \\
+    2.25 \\
+    1.25 \\
+\end{bmatrix}
+\end{equation}
+
+The resulting $Y$' vector is:
+
+\begin{equation}
+Y' =
+\begin{bmatrix}
+  2.5    & 2.5   & -2.5 & -2.5 \\
+  2      & ?     & ?    & -2 \\
+  -.2.25 & -2.25 & 3.75 & 1.25 \\
+  -1.25  & -1.25 & 3.75 & -1.25
+\end{bmatrix}
+\end{equation}
+
+Now we must slightly modify the linear regression prediction to include the mean normalization term:
+
+$$(\theta^{(j)})^T x^{(i)} + \mu_i$$
+
+Now, for a new user, the initial predicted values will be equal to the $\mu$ term instead of simply being initialized to zero, which is more accurate.
+d
